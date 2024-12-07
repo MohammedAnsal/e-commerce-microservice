@@ -1,12 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-
-export interface ProductType extends Document {
-  name: String;
-  description: String;
-  price: Number;
-  stock: Number;
-
-}
+import { ProductType } from "../types/interface/IProduct";
 
 const productSchema = new Schema<ProductType>(
   {

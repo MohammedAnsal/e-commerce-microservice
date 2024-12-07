@@ -1,19 +1,24 @@
 import { Model } from "mongoose";
-import { query, Request, Response } from "express";
-import Product, { ProductType } from "../models/productModel";
+import { Request, Response } from "express";
+import Product from "../models/productModel";
+import { ProductType } from "../types/interface/IProduct";
+import MessageBroker from "../utils/messageBroker";
+import { ProductEvent } from "../types/kafkaType";
 
 class ProductController {
   private ProductModel: Model<ProductType>;
+  private kafka: MessageBroker;
 
   constructor() {
     this.ProductModel = Product;
+    this.kafka = new MessageBroker();
   }
 
   async addProduct(req: Request, res: Response): Promise<void> {
     try {
       const { name, description, price, stock } = req.body;
 
-      const exist = await this.ProductModel.findOne({ name: name });
+      const exist = await this.ProductModel.findOne({ name });
 
       if (!exist) {
         const newProduct = new this.ProductModel({
@@ -22,6 +27,17 @@ class ProductController {
           description: description,
           stock: stock,
         });
+
+        try {
+          await this.kafka.publish(
+            "Product_Topic",
+            { data: newProduct },
+            ProductEvent.CREATE
+          );
+        } catch (kafkaError) {
+          console.error("Kafka publish failed:", kafkaError);
+          throw new Error("Failed to publish Kafka event");
+        }
 
         await newProduct.save();
         res.status(201).json({ message: "Product Added Success..." });
@@ -41,8 +57,6 @@ class ProductController {
       const find = await this.ProductModel.findOne({ _id: id });
 
       if (find) {
-        console.log(find);
-
         const updateProduct = await this.ProductModel.findByIdAndUpdate(
           { _id: find._id },
           {
@@ -53,6 +67,12 @@ class ProductController {
               stock: stock,
             },
           }
+        );
+
+        await this.kafka.publish(
+          "Product_Topic",
+          { data: updateProduct },
+          ProductEvent.UPDATE
         );
 
         if (updateProduct) {
@@ -68,7 +88,17 @@ class ProductController {
     const { id } = req.params;
 
     if (id) {
-      await this.ProductModel.findByIdAndDelete({ _id: id });
+      const deleteProduct = await this.ProductModel.findOneAndUpdate(
+        { _id: id },
+        { $isDeleted: true },
+        { new: true }
+      );
+
+      await this.kafka.publish(
+        "Product_Topic",
+        { data: deleteProduct },
+        ProductEvent.UPDATE
+      );
 
       res.status(200).json({ message: "Product Deleted Successfully..." });
     }

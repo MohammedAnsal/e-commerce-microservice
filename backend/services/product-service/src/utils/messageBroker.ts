@@ -1,9 +1,9 @@
 import { Kafka, logLevel, Partitioners, Producer } from "kafkajs";
 import IKafka from "../types/interface/IKafka";
-import { TOPIC_TYPE, messagetype, UserEvent } from "../types/kafkaTypes";
+import { TOPIC_TYPE, messageType, ProductEvent } from "../types/kafkaType";
 
-const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "user-service";
-const KAFKA_BROKERS = [process.env.KAFKA_BROKERS_2 || "kafka:29092"];
+const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "product-service";
+const KAFKA_BROKERS = [process.env.KAFKA_BROKERS_1 || "kafka:29092"];
 
 class MessageBroker implements IKafka {
   private kafka: Kafka;
@@ -13,14 +13,13 @@ class MessageBroker implements IKafka {
     this.kafka = new Kafka({
       clientId: KAFKA_CLIENT_ID,
       brokers: KAFKA_BROKERS,
-      logLevel: logLevel.INFO,
+      logLevel: logLevel.INFO, 
     });
-
     this.producer = this.kafka.producer({
       createPartitioner: Partitioners.DefaultPartitioner,
     });
 
-    this.connectProducer(); // Connection Function Call
+    this.connectProducer(); //  Connection
   }
 
   private async connectProducer(): Promise<void> {
@@ -33,22 +32,25 @@ class MessageBroker implements IKafka {
     }
   }
 
-  //  Publish Setup :-
-
   async publish(
     topic: TOPIC_TYPE,
-    message: messagetype,
-    event: UserEvent
+    message: messageType,
+    event: ProductEvent
+  ): Promise<void> {
+    await this.producer.connect();
+    await this.producer.send({
+      topic,
+      messages: [{ value: JSON.stringify(message), key: event }],
+    });
+  }
+
+  async subscribe(
+    topic: TOPIC_TYPE,
+    groupId: string,
+    messageHandler: Function
   ): Promise<void> {
     try {
-      await this.producer.send({
-        topic,
-        messages: [{ value: JSON.stringify(message), key: event }],
-      });
-      console.log(`Message sent to topic ${topic}:`, message);
-    } catch (error) {
-      console.error(`Failed to publish message to topic ${topic}:`, error);
-    }
+    } catch (error) {}
   }
 }
 
