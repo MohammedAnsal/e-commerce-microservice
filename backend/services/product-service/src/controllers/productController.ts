@@ -39,7 +39,7 @@ class ProductController {
           throw new Error("Failed to publish Kafka event");
         }
 
-        await newProduct.save();
+        await newProduct.save();  //  Save the Data
         res.status(201).json({ message: "Product Added Success..." });
       } else {
         res.status(401).json({ message: "Product Already Exist..." });
@@ -85,25 +85,24 @@ class ProductController {
   }
 
   async deleteProduct(req: Request, res: Response): Promise<void> {
-    const { id } = req.params;
-
-    if (id) {
-      const deleteProduct = await this.ProductModel.findOneAndUpdate(
-        { _id: id },
-        { $isDeleted: true },
-        { new: true }
-      );
-
-      await this.kafka.publish(
-        "Product_Topic",
-        { data: deleteProduct },
-        ProductEvent.UPDATE
-      );
-
-      res.status(200).json({ message: "Product Deleted Successfully..." });
-    }
-
     try {
+      const { id } = req.params;
+
+      if (id) {
+        const deleteProduct = await this.ProductModel.findOneAndUpdate(
+          { _id: id },
+          { $isDeleted: true },
+          { new: true }
+        );
+
+        await this.kafka.publish(
+          "Product_Topic",
+          { data: deleteProduct },
+          ProductEvent.UPDATE
+        );
+
+        res.status(200).json({ message: "Product Deleted Successfully..." });
+      }
     } catch (error) {
       res.status(400).json({ message: "Somthing Went Wrong..." });
     }

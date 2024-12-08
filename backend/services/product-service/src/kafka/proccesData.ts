@@ -1,7 +1,7 @@
 import { Document, Model, ObjectId } from "mongoose";
 import { TOPIC_TYPE } from "../types/kafkaType";
 import MessageBroker from "../utils/messageBroker";
-import { TPayload, DocumentWithId } from "../types/consumeType";
+import { TPayload } from "../types/consumeType";
 import { Event } from "../types/events";
 import { config } from "dotenv";
 
@@ -41,6 +41,7 @@ const Delete = async <T>(id: string | ObjectId, model: Model<T>) => {
 };
 
 function switchFun<T>(payload: TPayload<T>, model: Model<T>) {
+  console.log(model, "mmmmmmm");
   switch (payload.event) {
     case Event.CREATE:
       Create<T>(
