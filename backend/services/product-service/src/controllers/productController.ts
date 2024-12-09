@@ -24,7 +24,7 @@ class ProductController {
       const exist = await this.ProductModel.findOne({ name });
 
       if (!exist) {
-        const newProduct = new this.ProductModel({
+        const newProduct = await this.ProductModel.create({
           name: name,
           price: price,
           description: description,
@@ -33,7 +33,7 @@ class ProductController {
 
         try {
           await this.kafka.publish(
-            "Product_Topic",
+            "Product-Topic",
             { data: newProduct },
             ProductEvent.CREATE
           );
@@ -42,7 +42,6 @@ class ProductController {
           throw new Error("Failed to publish Kafka event");
         }
 
-        await newProduct.save(); //  Save the Data
         res.status(201).json({ message: "Product Added Success..." });
       } else {
         res.status(401).json({ message: "Product Already Exist..." });
@@ -73,7 +72,7 @@ class ProductController {
         );
 
         await this.kafka.publish(
-          "Product_Topic",
+          "Product-Topic",
           { data: updateProduct },
           ProductEvent.UPDATE
         );
@@ -96,7 +95,7 @@ class ProductController {
 
         if (deleteProduct) {
           await this.kafka.publish(
-            "Product_Topic",
+            "Product-Topic",
             { data: deleteProduct },
             ProductEvent.UPDATE
           );

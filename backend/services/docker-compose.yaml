@@ -51,6 +51,17 @@ services:
     networks:
       - Ecommerce_network
 
+  cartService:
+    build: ./cart-service
+    container_name: cart-service
+    image: ansalshaah/ecommerce-cart-service
+    env_file:
+      - ./cart-service/.env
+    ports:
+      - '7003:7003'
+    networks:
+      - Ecommerce_network
+
 networks:
   Ecommerce_network:
     driver: bridge

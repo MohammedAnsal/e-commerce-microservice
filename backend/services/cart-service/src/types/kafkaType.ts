@@ -6,6 +6,6 @@ export type TOPIC_TYPE =
   | "User-Topic"
   | "Cart-Topic"
   | "Order-Topic"
-  | "Product-topic"
+  | "Product-Topic"
   | "Order-Topic-Product"
   | "Order-Topic-cart";

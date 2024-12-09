@@ -11,6 +11,6 @@ export enum ProductEvent {
 export type TOPIC_TYPE =
   | "User_Topic"
   | "Cart_Topic"
-  | "Product_Topic"
+  | "Product-Topic"
   | "Order_Topic"
   | "Order-Topic-Product";

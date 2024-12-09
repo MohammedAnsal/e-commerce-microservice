@@ -4,7 +4,7 @@ import { AuthRequest } from "../types/api";
 import jwtPayload from "../types/jwt";
 
 const authMid = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies.jwt;
+  const token = req.cookies.jwtToken;  
 
   if (!token) {
     res.status(400);

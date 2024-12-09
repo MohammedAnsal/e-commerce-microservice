@@ -40,6 +40,17 @@ const Delete = async <T>(id: string | ObjectId, model: Model<T>) => {
   }
 };
 
+const Upsert = async <T>(
+  id: string | ObjectId,
+  data: Record<string, any>,
+  model: Model<T>
+) => {
+  try {
+    await model.findOneAndUpdate({ _id: id }, data, { upsert: true });
+  } catch (error) {
+    console.error("Error processing data:", (error as Error).message);
+  }
+};
 function switchFun<T>(payload: TPayload<T>, model: Model<T>) {
   switch (payload.event) {
     case Event.CREATE:
@@ -58,6 +69,13 @@ function switchFun<T>(payload: TPayload<T>, model: Model<T>) {
       break;
     case Event.DELETE:
       Delete<T>(payload.message.data._id as string | ObjectId, model);
+      break;
+    case Event.UPSERT:
+      Upsert<T>(
+        payload.message.data._id as string | ObjectId,
+        payload.message.data,
+        model
+      );
       break;
   }
 }
