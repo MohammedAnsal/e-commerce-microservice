@@ -18,6 +18,9 @@ class ProductController {
     try {
       const { name, description, price, stock } = req.body;
 
+      if (!name || !description || !price || !stock)
+        throw new Error("Please fill all the instructions...");
+
       const exist = await this.ProductModel.findOne({ name });
 
       if (!exist) {
@@ -39,7 +42,7 @@ class ProductController {
           throw new Error("Failed to publish Kafka event");
         }
 
-        await newProduct.save();  //  Save the Data
+        await newProduct.save(); //  Save the Data
         res.status(201).json({ message: "Product Added Success..." });
       } else {
         res.status(401).json({ message: "Product Already Exist..." });
@@ -89,19 +92,16 @@ class ProductController {
       const { id } = req.params;
 
       if (id) {
-        const deleteProduct = await this.ProductModel.findOneAndUpdate(
-          { _id: id },
-          { $isDeleted: true },
-          { new: true }
-        );
+        const deleteProduct = await this.ProductModel.findByIdAndDelete(id);
 
-        await this.kafka.publish(
-          "Product_Topic",
-          { data: deleteProduct },
-          ProductEvent.UPDATE
-        );
-
-        res.status(200).json({ message: "Product Deleted Successfully..." });
+        if (deleteProduct) {
+          await this.kafka.publish(
+            "Product_Topic",
+            { data: deleteProduct },
+            ProductEvent.UPDATE
+          );
+          res.status(200).json({ message: "Product Deleted Successfully..." });
+        }
       }
     } catch (error) {
       res.status(400).json({ message: "Somthing Went Wrong..." });

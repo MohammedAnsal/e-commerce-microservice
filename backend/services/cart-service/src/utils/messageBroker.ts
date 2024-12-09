@@ -1,8 +1,9 @@
 import { Kafka, logLevel, Partitioners, Producer } from "kafkajs";
 import IKafka from "../types/interface/IKafka";
-import { TOPIC_TYPE, messageType, ProductEvent } from "../types/kafkaType";
+import { TOPIC_TYPE, messageType } from "../types/kafkaType";
+import { Event } from "../types/events";
 
-const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "product-service";
+const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "cart-service";
 const KAFKA_BROKERS = [process.env.KAFKA_BROKERS || "kafka:29092"];
 
 class MessageBroker implements IKafka {
@@ -37,7 +38,7 @@ class MessageBroker implements IKafka {
   async publish(
     topic: TOPIC_TYPE,
     message: messageType,
-    event: ProductEvent
+    event: Event
   ): Promise<void> {
     await this.producer.send({
       topic,

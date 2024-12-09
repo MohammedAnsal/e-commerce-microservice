@@ -1,13 +1,13 @@
 import { Document, Model, ObjectId } from "mongoose";
 import { TOPIC_TYPE } from "../types/kafkaType";
 import MessageBroker from "../utils/messageBroker";
-import { TPayload } from "../types/consumeType";
 import { Event } from "../types/events";
 import { config } from "dotenv";
+import { TPayload } from "../types/consumeType";
 
 config();
 
-const service = process.env.SERVICE || "product-service";
+const service = process.env.SERVICE || "cart-service";
 
 const Create = async <T>(id: string | ObjectId, data: T, model: Model<T>) => {
   try {

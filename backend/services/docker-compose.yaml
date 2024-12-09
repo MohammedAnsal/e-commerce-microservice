@@ -25,6 +25,19 @@ services:
     networks:
       - Ecommerce_network
 
+  userService:
+    build: ./user-service
+    container_name: user-service
+    image: ansalshaah/ecommerce-user-service
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      - kafka
+    ports:
+      - '7001:7001'
+    networks:
+      - Ecommerce_network
+
   productService:
     build: ./product-service
     container_name: product-service
