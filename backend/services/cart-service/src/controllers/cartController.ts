@@ -89,8 +89,6 @@ class CartController {
 
       const findProduct = await this.cartModel.findOne({ _id: id });
 
-      console.log(findProduct,'ppppp')
-
       if (!findProduct) throw new Error("There is no product in cart this id");
 
       const cartRemove = await this.cartModel.findOneAndUpdate(

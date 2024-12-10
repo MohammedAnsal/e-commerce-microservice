@@ -37,6 +37,15 @@ services:
       - '7001:7001'
     networks:
       - Ecommerce_network
+    develop:
+      watch:
+        - action: sync
+          path: ./user-service
+          target: /app/
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./user-service/package.json
 
   productService:
     build: ./product-service
@@ -50,6 +59,15 @@ services:
       - '7002:7002'
     networks:
       - Ecommerce_network
+    develop:
+      watch:
+        - action: sync
+          path: ./product-service
+          target: /app/
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./product-service/package.json
 
   cartService:
     build: ./cart-service
@@ -61,6 +79,15 @@ services:
       - '7003:7003'
     networks:
       - Ecommerce_network
+    develop:
+      watch:
+        - action: sync
+          path: ./cart-service
+          target: /app/
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./cart-service/package.json
 
   orderService:
     build: ./order-service
@@ -72,6 +99,15 @@ services:
       - '7004:7004'
     networks:
       - Ecommerce_network
+    develop:
+      watch:
+        - action: sync
+          path: ./order-service
+          target: /app/
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./order-service/package.json
       
 networks:
   Ecommerce_network:

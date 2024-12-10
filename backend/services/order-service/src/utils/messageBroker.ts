@@ -3,7 +3,7 @@ import IKafka from "../types/interface/IKafka";
 import { TOPIC_TYPE, messageType } from "../types/kafkaType";
 import { Event } from "../types/events";
 
-const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "cart-service";
+const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || "order-service";
 const KAFKA_BROKERS = [process.env.KAFKA_BROKERS || "kafka:29092"];
 
 class MessageBroker implements IKafka {
@@ -73,7 +73,7 @@ class MessageBroker implements IKafka {
               };
 
               if (inpMessage.event && inpMessage.message) {
-                console.log(inpMessage, "kkkkkkk");
+                console.log(inpMessage,'got it from order-service');
 
                 await messageHandler(inpMessage);
               } else {

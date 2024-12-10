@@ -33,6 +33,8 @@ class OrderController {
       const userId = req.user;
 
       const cart = await this.cartModel.findOne({ userId });
+      console.log(cart);
+
       if (!cart || cart.items.length == 0) {
         return res.status(400).json({ message: "Cart is empty..." });
       }
@@ -63,7 +65,7 @@ class OrderController {
         totalAmount += productPrice;
         if (updateProduct) {
           await this.kafka.publish(
-            "Order-Topic-cart",
+            "Order-Topic-Cart",
             { data: updateProduct },
             Event.UPDATE
           );
@@ -73,6 +75,7 @@ class OrderController {
           userId,
           items: orderItems,
           shippingAddress: { state, street, city, country, postalCode },
+          totalAmount,
           paymentMethod: "Cash on Delivery",
           status: "Pending",
         });
@@ -90,6 +93,48 @@ class OrderController {
             .json({ message: "Order Created Successfully", data: order });
         }
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getSingleOrder(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    try {
+      const { id } = req.params;
+      const userId = req.user;
+
+      if (!id) {
+        return res.status(400).json({ message: "Id Missing.." });
+      }
+
+      const getOrder = await this.orderModel
+        .findOne({ userId, _id: id })
+        .populate("userId")
+        .populate("items.productId");
+      if (!getOrder) {
+        return res.status(400).json({ message: "Order Not Found" });
+      }
+      res.status(200).json({ message: "Order Found", data: getOrder });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllOrderds(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    try {
+      const findOrder = await this.orderModel.find();
+      if (!findOrder) {
+        return res.status(400).json({ message: "There is no order" });
+      }
+      res.status(200).json({ message: "All Orders", data: findOrder });
     } catch (error) {
       next(error);
     }

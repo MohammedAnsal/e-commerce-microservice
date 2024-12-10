@@ -8,4 +8,4 @@ export type TOPIC_TYPE =
   | "Order-Topic"
   | "Product-Topic"
   | "Order-Topic-Product"
-  | "Order-Topic-cart";
+  | "Order-Topic-Cart";

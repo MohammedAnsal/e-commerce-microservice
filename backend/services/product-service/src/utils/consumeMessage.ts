@@ -3,7 +3,7 @@ import Product from "../models/productModel";
 import { ProductType } from "../types/interface/IProduct";
 
 const consumeMessage = () => {
-  processData<ProductType>("Order-Topic-Product", "product-group", Product);
+  processData<ProductType>("Order-Topic-Product", "product_group", Product);  // For Product
 };
 
 export default consumeMessage;

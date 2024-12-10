@@ -73,7 +73,7 @@ class MessageBroker implements IKafka {
               };
 
               if (inpMessage.event && inpMessage.message) {
-                console.log(inpMessage,'kkkkkkk');
+                console.log(inpMessage,'got it from cart-service');
                 
                 await messageHandler(inpMessage);
               } else {

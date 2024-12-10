@@ -5,8 +5,9 @@ import ICart from "../types/interface/ICart";
 import IProduct from "../types/interface/IProduct";
 
 const consumeMessage = () => {
-  processData<ICart>("Order-Topic-cart", "cart_group", Cart);
-  processData<IProduct>("Product-Topic", "product_group", Product);
+  processData<IProduct>("Product-Topic", "product-service-group", Product); // For Product (Product-Service)
+  processData<ICart>("Order-Topic-Cart", "cart-service-group", Cart); // For Cart From Order
+  processData<IProduct>("Order-Topic-Product", "order-service-product-group", Product); // For Product From Order
 };
 
 export default consumeMessage;

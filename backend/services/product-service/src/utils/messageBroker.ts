@@ -72,6 +72,7 @@ class MessageBroker implements IKafka {
               };
 
               if (inpMessage.event && inpMessage.message) {
+                console.log(inpMessage, "got it from product-service");
                 await messageHandler(inpMessage);
               } else {
                 console.warn(`Malformed message received: ${message}`);
