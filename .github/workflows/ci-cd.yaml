@@ -18,10 +18,6 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install dependencies for gateway
-      run: npm install
-      working-directory: ./backend/services/gateway
-
     - name: Install dependencies for user-service
       run: npm install
       working-directory: ./backend/services/user-service
