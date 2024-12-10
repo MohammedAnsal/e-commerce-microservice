@@ -23,19 +23,15 @@ class CartController {
     try {
       const { id, quantity } = req.body;
 
-      console.log(id, "iiiiiii");
-
       if (!id || !quantity) {
         return res
           .status(400)
           .json({ message: "Product ID and Quantity are required" });
       }
 
-      // const objectId = new Types.ObjectId(id);
+      const objectId = new Types.ObjectId(id);
 
-      const product = await this.productModel.find();
-
-      console.log(product, "pppppppppppppppppppppppp");
+      const product = await this.productModel.findById(objectId);
 
       if (!product) {
         return res.status(400).json({ message: "Product Not Found" });
@@ -91,7 +87,9 @@ class CartController {
     try {
       const { id } = req.body;
 
-      const findProduct = await this.cartModel.findById(id);
+      const findProduct = await this.cartModel.findOne({ _id: id });
+
+      console.log(findProduct,'ppppp')
 
       if (!findProduct) throw new Error("There is no product in cart this id");
 
@@ -113,7 +111,7 @@ class CartController {
         return res.status(200).json({ message: "Product Remove Success" });
       }
     } catch (error) {
-      throw new Error("Error Remove Cart");
+      console.error("Error in Remove Cart:", error);
     }
   }
 }

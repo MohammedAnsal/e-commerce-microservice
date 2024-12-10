@@ -6,7 +6,7 @@ config();
 dbConnect();
 
 const app = express();
-const PORT = process.env.PORT || 7003;
+const PORT = process.env.PORT || 7004;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
