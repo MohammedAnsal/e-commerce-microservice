@@ -34,7 +34,7 @@ jobs:
       run: npm install
       working-directory: ./backend/services/order-service
 
-    # Build Docker images for all services. 
+    # Build Docker images for all services.  
     - name: Debug - List files
       run: | 
         ls -la ./backend/services/gateway/
