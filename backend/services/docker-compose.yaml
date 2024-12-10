@@ -62,6 +62,17 @@ services:
     networks:
       - Ecommerce_network
 
+  orderService:
+    build: ./order-service
+    container_name: order-service
+    image: ansalshaah/ecommerce-order-service
+    env_file:
+      - ./order-service/.env
+    ports:
+      - '7004:7004'
+    networks:
+      - Ecommerce_network
+      
 networks:
   Ecommerce_network:
     driver: bridge
