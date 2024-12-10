@@ -109,6 +109,20 @@ services:
         - action: rebuild
           path: ./order-service/package.json
       
+  nginx:
+    build: ./gateway
+    container_name: nginx-gateway
+    image: ansalshaah/ecommerce-nginx-gateway
+    ports:
+      - 8000:80
+    networks:
+      - Ecommerce_network
+    depends_on:
+      - userService
+      - productService
+      - cartService
+      - orderService
+
 networks:
   Ecommerce_network:
     driver: bridge
