@@ -1,35 +1,62 @@
 name: CI/CD Pipeline
 
-on: 
+on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
 
+    - name: Install dependencies for gateway
+      run: npm install
+      working-directory: ./backend/services/gateway
+
+    - name: Install dependencies for user-service
+      run: npm install
+      working-directory: ./backend/services/user-service
+
+    - name: Install dependencies for product-service
+      run: npm install
+      working-directory: ./backend/services/product-service
+
+    - name: Install dependencies for cart-service
+      run: npm install
+      working-directory: ./backend/services/cart-service
+
+    - name: Install dependencies for order-service
+      run: npm install
+      working-directory: ./backend/services/order-service
+
+    # Build Docker images for all services
+    - name: Build Docker images
+      run: |
+        docker build -t ansalshaah/ecommerce-nginx-gateway ./backend/services/gateway
+        docker build -t ansalshaah/ecommerce-user-service ./backend/services/user-service
+        docker build -t ansalshaah/ecommerce-product-service ./backend/services/product-service
+        docker build -t ansalshaah/ecommerce-cart-service ./backend/services/cart-service
+        docker build -t ansalshaah/ecommerce-order-service./backend/services/order-service
+
+    # Log in to Docker Hub
     - name: Log in to Docker Hub
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASS }}
+      run: echo "${{ secrets.DOCKER_PASS }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Build and push Docker image
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
+    # Push Docker images to Docker Hub
+    - name: Push Docker images
+      run: |
+        docker push ansalshaah/ecommerce-nginx-gateway:latest
+        docker push ansalshaah/ecommerce-user-service:latest
+        docker push ansalshaah/ecommerce-product-service:latest
+        docker push ansalshaah/ecommerce-cart-service:latest
+        docker push ansalshaah/ecommerce-order-service:latest
+ 
