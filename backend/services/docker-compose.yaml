@@ -114,7 +114,7 @@ services:
     container_name: nginx-gateway
     image: ansalshaah/ecommerce-nginx-gateway
     ports:
-      - 8000:80
+      - 80:80
     networks:
       - Ecommerce_network
     depends_on:
